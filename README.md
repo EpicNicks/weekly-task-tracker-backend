@@ -7,7 +7,8 @@ Set up environment variables for DB connection:
 DB_NAME\
 DB_USER\
 DB_PASSWORD\
-DB_HOST
+DB_HOST\
+JWT_SECRET
 
 ```npm
 npm install

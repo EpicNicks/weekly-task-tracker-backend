@@ -12,10 +12,13 @@ Task.init({
     taskName: { type: DataTypes.STRING(100), allowNull: false },
     weeklyTargetMinutes: { type: DataTypes.INTEGER, allowNull: false },
     rgbTaskColor: { type: DataTypes.STRING(8) },
-    username: { type: DataTypes.STRING(50), allowNull: false, references: { model: User, key: 'username' } }
+    userId: { type: DataTypes.STRING(50), allowNull: false, references: { model: User, key: 'id' } }
 }, {
     sequelize,
-    modelName: 'Task'
+    modelName: 'Task',
+    indexes: [{
+        fields: ['taskName', 'userId'], unique: true
+    }]
 })
 
 module.exports = Task
