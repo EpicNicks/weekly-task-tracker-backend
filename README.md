@@ -1,0 +1,15 @@
+# Weekly Task Tracker (Backend)
+A basic token-auth based express.js backend that interacts with a MySQL database to track daily progress toward weekly goals
+
+## How to use
+Set up environment variables for DB connection:
+
+DB_NAME\
+DB_USER\
+DB_PASSWORD\
+DB_HOST
+
+```npm
+npm install
+npm run start
+```
