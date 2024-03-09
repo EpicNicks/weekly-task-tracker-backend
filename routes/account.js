@@ -19,7 +19,7 @@ router.post('/register', rateLimitMiddleware, async (req, res) => {
         if (await User.findOne({ where: { username } })) {
             return res.status(401).json({ success: false, error: `Username ${username} is already in use` })
         }
-        await User.create({ username, passSha256: password, points: 0 })
+        await User.create({ username, passwordHash: password, points: 0 })
         res.status(201).send({ success: true })
     } catch (error) {
         res.status(400).send({ success: false, error })
@@ -32,7 +32,7 @@ router.post('/login', rateLimitMiddleware, async (req, res) => {
     if (!user) {
         return res.status(401).json({ success: false, error: 'Invalid username provided' })
     }
-    if (await bcrypt.compare(password, user.passSha256)) {
+    if (await bcrypt.compare(password, user.passwordHash)) {
         const token = jwt.sign({ _id: user.id }, process.env.JWT_SECRET)
         return res.json({ success: true, token })
     } else {
