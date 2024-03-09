@@ -39,10 +39,14 @@ router.get('/all', checkTokenMiddleware, async (req, res) => {
 // params: ISO8601 date string
 router.get(':date', checkTokenMiddleware, async (req, res) => {
     const { date } = req.params
+    const { taskId } = req.body
+    if (!taskId) {
+        return res.status(400).json({ success: false, error: 'taskId not provided' })
+    }
     if (!isValidISO8601(date)) {
         return res.status(400).json({ success: false, error: `invalid date ${date} passed` })
     }
-    const dailyLog = await DailyLog.findByPk(date)
+    const dailyLog = await DailyLog.findByPk({ logDate: date, taskId })
     if (!dailyLog) {
         return res.status(404).json({ success: false, error: `daily log on ${date} not found` })
     }
@@ -51,11 +55,11 @@ router.get(':date', checkTokenMiddleware, async (req, res) => {
 
 router.post('/create', async (req, res) => {
     const { logDate, dailyTimeMinutes, taskId } = req.body
-    if (!isValidISO8601(logDate)) {
-        return res.status(400).json({ success: false, error: `invalid date ${logDate} passed, ensure the format passed is string of YYYY-MM-DD` })
-    }
     if (!taskId) {
         return res.status(400).json({ success: false, error: 'taskId not provided' })
+    }
+    if (!isValidISO8601(logDate)) {
+        return res.status(400).json({ success: false, error: `invalid date ${logDate} passed, ensure the format passed is string of YYYY-MM-DD` })
     }
     if (!!(await DailyLog.findByPk({ logDate, taskId }))) {
         return res.status(400).json({ success: false, error: `record at date ${logDate} already exists for taskId ${taskId}` })
@@ -77,14 +81,14 @@ router.post('/create', async (req, res) => {
 router.patch('/change-date/:date', async (req, res) => {
     const { date } = req.params
     const { logDate, taskId } = req.body
+    if (!taskId) {
+        return res.status(400).json({ success: false, error: 'taskId not provided' })
+    }
     if (!isValidISO8601(date)) {
         return res.status(400).json({ success: false, error: `invalid date ${date} passed, ensure the format passed is string of YYYY-MM-DD` })
     }
     if (!isValidISO8601(logDate)) {
         return res.status(400).json({ success: false, error: `invalid date ${date} passed, ensure the format passed is string of YYYY-MM-DD` })
-    }
-    if (!taskId) {
-        return res.status(400).json({ success: false, error: 'taskId not provided' })
     }
     try {
         const dailyLog = await DailyLog.findByPk({ logDate: date, taskId })

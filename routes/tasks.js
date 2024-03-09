@@ -20,9 +20,13 @@ router.get(':id', checkTokenMiddleware, async (req, res) => {
 
 router.get('/', checkTokenMiddleware, async (req, res) => {
     const { taskName } = req.query
-    const task = await Task.findOne({ where: { taskName } })
+    const { userId } = req.body
+    if (!userId){
+        return res.status(400).json({success: false, error: "userId was not in the request body. userId must be provided to query tasks by name"})
+    }
+    const task = await Task.findOne({ where: { taskName, userId } })
     if (!task) {
-        res.status(404).json({ success: false, error: `task with name ${taskName} not found` })
+        res.status(404).json({ success: false, error: `task with name ${taskName} on userId ${userId} not found` })
     }
     else {
         res.json({ success: true, task })
@@ -31,6 +35,10 @@ router.get('/', checkTokenMiddleware, async (req, res) => {
 
 router.patch('/change-name', checkTokenMiddleware, async (req, res) => {
     const { oldName, newName } = req.query
+    const { taskId } = req.body
+    if (!taskId){
+        return res.status(400).json({success: false, error: 'taskId not supplied in request body'})
+    }
     if (!oldName || !newName) {
         return res.status(400).json({
             success: false, error: `
@@ -41,7 +49,7 @@ router.patch('/change-name', checkTokenMiddleware, async (req, res) => {
     if (newName.length > 100){
         return res.status(400).json({ success: false, error: 'newName max length is 100 characters'})
     }
-    const task = await Task.findOne({ where: { taskName: oldName } })
+    const task = await Task.findByPk({taskId})
     if (!task) {
         return res.status(404).json({ success: false, error: `taskName ${taskName} not found` })
     }
