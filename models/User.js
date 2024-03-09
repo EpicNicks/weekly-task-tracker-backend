@@ -10,7 +10,7 @@ class User extends Model {}
 User.init({
     id: { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true},
     username: { type: DataTypes.STRING(50), allowNull: false, unique: true },
-    passwordHash: { type: DataTypes.STRING(64), allowNull: false },
+    passwordHash: { type: DataTypes.STRING(60), allowNull: false },
     points: { type: DataTypes.INTEGER, allowNull: false }
 }, {
     sequelize,
