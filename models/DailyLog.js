@@ -10,7 +10,7 @@ class DailyLog extends Model {}
 DailyLog.init({
     logDate: { type: DataTypes.DATEONLY, allowNull: false, primaryKey: true },
     dailyTimeMinutes: { type: DataTypes.INTEGER, allowNull: false },
-    collectedPoints: { typoe: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    collectedPoints: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     taskId: { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, references: { model: Task, key: 'id' } }
 }, {
     sequelize,

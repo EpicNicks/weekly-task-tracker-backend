@@ -50,8 +50,28 @@ router.get(':date', checkTokenMiddleware, async (req, res) => {
 })
 
 router.post('/create', async (req, res) => {
-    // TODO
-    const { logDate, taskId } = req.body
+    const { logDate, dailyTimeMinutes, taskId } = req.body
+    if (!isValidISO8601(logDate)) {
+        return res.status(400).json({ success: false, error: `invalid date ${logDate} passed, ensure the format passed is string of YYYY-MM-DD` })
+    }
+    if (!taskId) {
+        return res.status(400).json({ success: false, error: 'taskId not provided' })
+    }
+    if (!!(await DailyLog.findByPk({ logDate, taskId }))) {
+        return res.status(400).json({ success: false, error: `record at date ${logDate} already exists for taskId ${taskId}` })
+    }
+    try {
+        const log = await DailyLog.create({
+            logDate,
+            taskId,
+            dailyTimeMinutes,
+            collectedPoints: false
+        })
+        res.json({ success: true, result: log })
+    } catch (error) {
+        console.log("error updating item", error)
+        res.status(500).json({ success: false, error: "Internal server error" })
+    }
 })
 
 router.patch('/change-date/:date', async (req, res) => {
