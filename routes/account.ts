@@ -27,7 +27,8 @@ router.post('/register', async (req, res) => {
         await User.create({ username, passwordHash: password, points: 0 })
         res.status(201).send({ success: true })
     } catch (error) {
-        res.status(400).send({ success: false, error })
+        console.log(error)
+        res.status(400).send({ success: false, error: 'Internal server error' })
     }
 })
 
