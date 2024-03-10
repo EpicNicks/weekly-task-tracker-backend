@@ -1,11 +1,17 @@
-const { Sequelize, DataTypes, Model } = require('sequelize')
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+import { Sequelize, DataTypes, Model, InferAttributes, InferCreationAttributes, ForeignKey } from 'sequelize'
+import Task from './Task'
+
+const sequelize = new Sequelize(process.env.DB_NAME!, process.env.DB_USER!, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
     dialect: 'mysql'
 })
-const Task = require('./Task')
 
-class DailyLog extends Model {}
+export default class DailyLog extends Model<InferAttributes<DailyLog>, InferCreationAttributes<DailyLog>> {
+    declare logDate: string
+    declare dailyTimeMinutes: number
+    declare collectedPoints: boolean
+    declare taskId: ForeignKey<number>
+}
 
 DailyLog.init({
     logDate: { type: DataTypes.DATEONLY, allowNull: false, primaryKey: true },
@@ -19,6 +25,3 @@ DailyLog.init({
         fields: ['logDate', 'taskId'], unique: true
     }]
 })
-
-module.exports = DailyLog
-

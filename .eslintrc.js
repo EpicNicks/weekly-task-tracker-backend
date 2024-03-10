@@ -43,6 +43,14 @@ module.exports = {
                 'destructuring': 'any',
                 'ignoreReadBeforeAssign': false
             }
+        ],
+        'no-unused-vars': [
+            'error'
+        ],
+        'no-duplicate-imports': [
+            'error', {
+                'includeExports': true
+            }
         ]
     }
 }
