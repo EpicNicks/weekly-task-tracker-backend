@@ -11,6 +11,7 @@ export default class Task extends Model<InferAttributes<Task>, InferCreationAttr
     declare taskName: string
     declare weeklyTargetMinutes: number
     declare rgbTaskColor: string
+    declare isActive: boolean
     declare userId: ForeignKey<number>
 }
 
@@ -23,14 +24,20 @@ Task.init({
     },
     taskName: {
         type: DataTypes.STRING(100),
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     weeklyTargetMinutes: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
     rgbTaskColor: {
-        type: DataTypes.STRING(8)
+        type: DataTypes.STRING(8),
+        allowNull: false
+    },
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
     },
     userId: {
         type: DataTypes.STRING(50),

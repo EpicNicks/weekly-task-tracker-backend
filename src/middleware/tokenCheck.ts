@@ -1,15 +1,15 @@
-import { Request, Response, NextFunction } from 'express'
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import { Request, Response } from 'express'
+import jwt from 'jsonwebtoken'
 
-export interface TokenRequest extends Request {
-    user?: string | JwtPayload
+interface DecodedToken {
+    userId: number
 }
 
-export default function checkTokenMiddleware(
-    req: TokenRequest,
-    res: Response,
-    next: NextFunction
-) {
+export interface TokenRequest extends Request {
+    decodedToken?: DecodedToken
+}
+
+export default function checkTokenMiddleware(req: TokenRequest, res: Response<any, Record<string, any>>, next: () => void) {
     const authHeader = req.headers.authorization
     // expecting 'Bearer {actual token}'
     const token = authHeader && authHeader.split(' ')[1]
@@ -17,13 +17,13 @@ export default function checkTokenMiddleware(
         // unauthorized
         return res.sendStatus(401)
     }
-    jwt.verify(token, process.env.JWT_SECRET!, (err, user) => {
-        if (!!err) {
+    jwt.verify(token, process.env.JWT_SECRET!, (err, decodedToken) => {
+        if (err) {
             console.log(err)
             return res.sendStatus(403) // Token authentication failed (Forbidden)
         }
-        console.log(user)
-        req.user = user // Attach the user object to the request for later use
+        console.log(decodedToken)
+        req.decodedToken = decodedToken as DecodedToken // Attach the user object to the request for later use
         next() // Pass control to the next middleware or route handler
     })
 }

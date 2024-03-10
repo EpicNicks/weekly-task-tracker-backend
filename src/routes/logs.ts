@@ -12,19 +12,19 @@ router.get('/all', checkTokenMiddleware, async (req, res) => {
     const { startDate, endDate }: { startDate?: string, endDate?: string } = req.query
 
     if (!!startDate && !!endDate) {
-        return res.json({ success: true, result: await DailyLog.findAll() })
+        return res.json({ success: true, dailyLogs: await DailyLog.findAll() })
     }
-    if (!!startDate) {
+    if (startDate) {
         if (!isValidISO8601(endDate!)) {
             return res.status(400).json({ success: false, error: `endDate ${endDate} is not valid (must be in format: YYYY-MM-DD)` })
         }
-        return res.json({ success: true, result: await DailyLog.findAll({ where: { logDate: { lte: endDate } } }) })
+        return res.json({ success: true, dailyLogs: await DailyLog.findAll({ where: { logDate: { lte: endDate } } }) })
     }
-    if (!!endDate) {
+    if (endDate) {
         if (!isValidISO8601(startDate!)) {
             return res.status(400).json({ success: false, error: `startDate ${startDate} is not valid (must be in format: YYYY-MM-DD)` })
         }
-        return res.json({ success: true, result: await DailyLog.findAll({ where: { logDate: { gte: startDate } } }) })
+        return res.json({ success: true, dailyLogs: await DailyLog.findAll({ where: { logDate: { gte: startDate } } }) })
     }
     // both are provided and valid
     if (DateTime.fromISO(startDate!) > DateTime.fromISO(endDate!)) {
@@ -34,11 +34,11 @@ router.get('/all', checkTokenMiddleware, async (req, res) => {
     // according to ChatGPT, passing the string raw will have Sequelize simply pass the string forward raw and have MySQL handle the implicit conversion as if it was a raw query
     // if there are any problems with this, recheck how the middleware handles date strings
     const logs = await DailyLog.findAll({ where: { logDate: { [Op.between]: [startDate!, endDate!] } } })
-    res.json({ success: true, result: logs })
+    res.json({ success: true, dailyLogs: logs })
 })
 
 // params: ISO8601 date string
-router.get(':date', checkTokenMiddleware, async (req, res) => {
+router.get('/:date', checkTokenMiddleware, async (req, res) => {
     const { date } = req.params
     const { taskId } = req.body
     if (!taskId) {
@@ -72,7 +72,7 @@ router.post('/create', async (req, res) => {
             dailyTimeMinutes,
             collectedPoints: false
         })
-        res.json({ success: true, result: log })
+        res.json({ success: true, dailyLog: log })
     } catch (error) {
         console.log('error updating item', error)
         res.status(500).json({ success: false, error: 'Internal server error' })
@@ -102,7 +102,7 @@ router.patch('/change-date/:date', async (req, res) => {
             logDate,
         })
         const updatedLog = await DailyLog.findOne({ where: { logDate, taskId } })
-        return res.json({ success: true, updatedLog })
+        return res.json({ success: true, dailyLog: updatedLog })
     } catch (error) {
         console.error('Error updating item:', error)
         res.status(500).json({ success: false, error: 'Internal server error' })
@@ -129,7 +129,7 @@ router.patch('/change-daily-minutes/:date', async (req, res) => {
             dailyTimeMinutes,
         })
         const updatedLog = await DailyLog.findOne({ where: { logDate: date, taskId } })
-        return res.json({ success: true, updatedLog })
+        return res.json({ success: true, dailyLog: updatedLog })
     } catch (error) {
         console.error('Error updating item:', error)
         res.status(500).json({ success: false, error: 'Internal server error' })
