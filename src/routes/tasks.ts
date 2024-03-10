@@ -82,12 +82,13 @@ router.patch('deactivate/:taskId', checkTokenMiddleware, async (req, res) => {
     }
 })
 
-router.patch('/deactivate/', checkTokenMiddleware, async (req, res) => {
+router.patch('/deactivate/', checkTokenMiddleware, async (req: TokenRequest, res) => {
     const { taskName }: { taskName?: string } = req.query
+    const { userId } = req.decodedToken!
     if (!taskName) {
         return res.status(400).json({ success: false, error: 'Query parameter "taskName" was not provided' })
     }
-    const task = await Task.findOne({ where: { taskName } })
+    const task = await Task.findOne({ where: { taskName, userId } })
     if (!task) {
         return res.status(404).json({ success: false, error: `Task with taskName ${taskName} does not exist` })
     }

@@ -25,7 +25,6 @@ Task.init({
     taskName: {
         type: DataTypes.STRING(100),
         allowNull: false,
-        unique: true
     },
     weeklyTargetMinutes: {
         type: DataTypes.INTEGER,
