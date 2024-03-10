@@ -3,10 +3,10 @@ import bodyParser from 'body-parser'
 import rateLimit from 'express-rate-limit'
 import jwt from 'jsonwebtoken'
 
-import userRoutes from './routes/users'
-import accountRoutes from './routes/account'
-import taskRoutes from './routes/tasks'
-import logsRoutes from './routes/logs'
+import userRoutes from './src/routes/users'
+import accountRoutes from './src/routes/account'
+import taskRoutes from './src/routes/tasks'
+import logsRoutes from './src/routes/logs'
 
 const app = express()
 

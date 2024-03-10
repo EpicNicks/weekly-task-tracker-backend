@@ -1,4 +1,4 @@
-const isValidISO8601 = require('../validation/dateValidation')
+const isValidISO8601 = require('../src/validation/dateValidation')
 const { test, expect } = require('jest')
 
 test('should validate valid ISO8601 date strings', () => {
