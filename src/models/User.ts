@@ -40,6 +40,12 @@ User.init({
         beforeCreate: async (user: { passwordHash: string }) => {
             const salt = await bcrypt.genSalt()
             user.passwordHash = await bcrypt.hash(user.passwordHash, salt)
-        }
+        },
+        beforeUpdate: async (user) => {
+            if (user.changed('passwordHash')){
+                const salt = await bcrypt.genSalt()
+                user.passwordHash = await bcrypt.hash(user.passwordHash, salt)
+            }
+        },
     }
 })

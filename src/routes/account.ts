@@ -58,4 +58,39 @@ router.post('/login', async (req, res) => {
     }
 })
 
+router.patch('/change-password', checkTokenMiddleware, async (req: TokenRequest, res) => {
+    const { newPassword }: { newPassword?: string } = req.body
+    const { userId } = req.decodedToken!
+    if (!newPassword) {
+        return res.status(400).json({ success: false, error: 'Required parameter newPassword was not provided in request body' })
+    }
+    try {
+        const user = await User.findByPk(userId)
+
+        bcrypt.compare(newPassword, user!.passwordHash, async (err, passwordsMatch) => {
+            if (err) {
+                return res.status(500).json({ success: false, error: 'Internal server error' })
+            }
+            if (passwordsMatch) {
+                return res.status(400).json({ success: false, error: 'Password is same as old password' })
+            }
+            else {
+                try {
+                    await user!.update({
+                        passwordHash: newPassword
+                    })
+                    return res.json({ success: true })
+                } catch (error) {
+                    res.status(500).json({ success: false, error: 'Internal server error' })
+                }
+            }
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ success: false, error: 'Internal server error' })
+    }
+
+})
+
 export default router
