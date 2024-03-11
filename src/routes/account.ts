@@ -3,6 +3,7 @@ const router = express.Router()
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import User from '../models/User'
+import checkTokenMiddleware, { TokenRequest } from '../middleware/tokenCheck'
 
 router.get('/available/:username', async (req, res) => {
     const { username }: { username: string } = req.params
@@ -13,6 +14,17 @@ router.get('/available/:username', async (req, res) => {
         return res.status(401).json({ success: true, value: true, error: `username ${username} is already in use` })
     }
     return res.status(200).json({ success: true, value: false })
+})
+
+router.get('/user', checkTokenMiddleware, async (req: TokenRequest, res) => {
+    const { userId } = req.decodedToken!
+    try {
+        const user = await User.findByPk(userId)
+        return res.json({ success: true, value: user })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ success: false, error: 'Internal server error' })
+    }
 })
 
 router.post('/register', async (req, res) => {
