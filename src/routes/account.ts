@@ -20,7 +20,7 @@ router.get('/user', checkTokenMiddleware, async (req: TokenRequest, res) => {
     const { userId } = req.decodedToken!
     try {
         const user = await User.findByPk(userId)
-        return res.json({ success: true, value: user })
+        return res.json({ success: true, value: { id: user!.id, username: user!.username, points: user!.points } })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ success: false, error: 'Internal server error' })
