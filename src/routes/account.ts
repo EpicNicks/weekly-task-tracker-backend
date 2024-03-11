@@ -4,8 +4,8 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import User from '../models/User'
 
-router.get('/available', async (req, res) => {
-    const { username }: { username?: string } = req.body
+router.get('/available/:username', async (req, res) => {
+    const { username }: { username: string } = req.params
     if (!username) {
         return res.status(400).json({ success: false, error: 'username was not provided' })
     }
