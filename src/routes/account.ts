@@ -16,7 +16,7 @@ router.get('/available/:username', async (req, res) => {
     return res.status(200).json({ success: true, value: false })
 })
 
-router.get('/user', checkTokenMiddleware, async (req: TokenRequest, res) => {
+router.get('/userInfo', checkTokenMiddleware, async (req: TokenRequest, res) => {
     const { userId } = req.decodedToken!
     try {
         const user = await User.findByPk(userId)
