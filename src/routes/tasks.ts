@@ -15,7 +15,7 @@ router.get(':id', checkTokenMiddleware, async (req, res) => {
         res.status(404).json({ success: false, error: `task with id ${task} not found` })
     }
     else {
-        res.json({ success: true, task })
+        res.json({ success: true, value: task })
     }
 })
 
@@ -30,7 +30,7 @@ router.get('/', checkTokenMiddleware, async (req: TokenRequest, res) => {
         return res.status(404).json({ success: false, error: `task with name ${taskName} on userId ${userId} not found` })
     }
     else {
-        return res.json({ success: true, task })
+        return res.json({ success: true, value: task })
     }
 })
 
@@ -56,7 +56,7 @@ router.post('/create', checkTokenMiddleware, async (req: TokenRequest, res) => {
             weeklyTargetMinutes: weeklyTargetMinutes!,
             isActive: true,
         })
-        return res.json({ success: true, task })
+        return res.json({ success: true, value: task })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ success: false, error: 'Internal server error' })
@@ -74,7 +74,7 @@ router.patch('deactivate/:taskId', checkTokenMiddleware, async (req, res) => {
             const updatedTask = await task.update({
                 isActive: false
             })
-            res.json({ success: true, task: updatedTask })
+            res.json({ success: true, value: updatedTask })
         } catch (error) {
             console.log(error)
             res.status(500).json({ success: false, error: 'Internal server error' })
@@ -97,7 +97,7 @@ router.patch('/deactivate/', checkTokenMiddleware, async (req: TokenRequest, res
             const updatedTask = await task.update({
                 isActive: false
             })
-            res.json({ success: true, task: updatedTask })
+            res.json({ success: true, value: updatedTask })
         } catch (error) {
             console.log(error)
             res.status(500).json({ success: false, error: 'Internal server error' })
@@ -126,7 +126,7 @@ router.patch('/change-name', checkTokenMiddleware, async (req, res) => {
     }
     try {
         const updatedTask = await task.update({ taskName: newName })
-        return res.json({ success: true, task: updatedTask })
+        return res.json({ success: true, value: updatedTask })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ success: false, error: 'internal server error' })

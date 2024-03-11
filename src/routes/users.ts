@@ -12,7 +12,7 @@ router.get('/points/:userId', checkTokenMiddleware, async (req, res) => {
         // shouldn't happen since the user is already logged in
         return res.status(404).json({ success: false, error: `No User with username: ${pointsUser} found` })
     }
-    return res.json({ success: true, points: pointsUser.points })
+    return res.json({ success: true, value: pointsUser.points })
 })
 
 // called by the client at the end of the week

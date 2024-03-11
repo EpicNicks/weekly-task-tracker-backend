@@ -10,9 +10,9 @@ router.get('/available', async (req, res) => {
         return res.status(400).json({ success: false, error: 'username was not provided' })
     }
     if (await User.findOne({ where: { username } })) {
-        return res.status(401).json({ success: true, taken: true, error: `username ${username} is already in use` })
+        return res.status(401).json({ success: true, value: true, error: `username ${username} is already in use` })
     }
-    return res.status(200).json({ success: true, taken: false })
+    return res.status(200).json({ success: true, value: false })
 })
 
 router.post('/register', async (req, res) => {
@@ -40,7 +40,7 @@ router.post('/login', async (req, res) => {
     }
     if (await bcrypt.compare(password, user.passwordHash)) {
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!)
-        return res.json({ success: true, token })
+        return res.json({ success: true, value: token })
     } else {
         return res.status(401).json({ success: false, error: 'Incorrect password provided' })
     }
