@@ -3,6 +3,7 @@ const router = express.Router()
 import checkTokenMiddleware, { TokenRequest } from '../middleware/tokenCheck'
 import Task from '../models/Task'
 import { validateColorString, validateTaskNameNotTaken } from '../validation/taskValidations'
+import DailyLog from '../models/DailyLog'
 
 router.get('/all', checkTokenMiddleware, async (req, res) => {
     res.send(await Task.findAll())
@@ -56,8 +57,14 @@ router.post('/create', checkTokenMiddleware, async (req: TokenRequest, res) => {
         }
         if (numTotalTasks >= 200) {
             // should always have inactive ones if the total is 200+ but the total active is <= 50
-            const inactive = await Task.findOne({ where: { isActive: false } })
-            await inactive?.destroy()
+            const inactiveTask = await Task.findOne({ where: { isActive: false } })
+            if (inactiveTask) {
+                await inactiveTask.destroy()
+                const logsToDelete = await DailyLog.findAll({ where: { taskId: inactiveTask.id } })
+                for (const log of logsToDelete) {
+                    log.destroy()
+                }
+            }
         }
 
         const task = await Task.create({
