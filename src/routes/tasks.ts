@@ -22,8 +22,8 @@ router.get(':id', checkTokenMiddleware, async (req, res) => {
 router.get('/', checkTokenMiddleware, async (req: TokenRequest, res) => {
     const { taskName }: { taskName?: string } = req.query
     const { userId } = req.decodedToken!
-    if (!taskName){
-        return res.status(400).json({ success: false, error: 'Query parameter "taskName" was not provided'})
+    if (!taskName) {
+        return res.status(400).json({ success: false, error: 'Query parameter "taskName" was not provided' })
     }
     const task = await Task.findOne({ where: { taskName, userId } })
     if (!task) {
@@ -49,6 +49,17 @@ router.post('/create', checkTokenMiddleware, async (req: TokenRequest, res) => {
         return res.status(400).json({ success: false, error: 'weeklyTargetMinutes was not provided' })
     }
     try {
+        const numActiveTasks = await Task.count({ where: { userId, isActive: true } })
+        const numTotalTasks = await Task.count({ where: { userId } })
+        if (numActiveTasks >= 50) {
+            return res.status(400).json({ success: false, error: `User ${userId} has reached the maximum number of active tasks` })
+        }
+        if (numTotalTasks >= 200) {
+            // should always have inactive ones if the total is 200+ but the total active is <= 50
+            const inactive = await Task.findOne({ where: { isActive: false } })
+            await inactive?.destroy()
+        }
+
         const task = await Task.create({
             userId,
             taskName: taskName!,
