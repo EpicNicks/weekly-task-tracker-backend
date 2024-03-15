@@ -60,10 +60,8 @@ router.post('/create', checkTokenMiddleware, async (req: TokenRequest, res) => {
             const inactiveTask = await Task.findOne({ where: { isActive: false } })
             if (inactiveTask) {
                 await inactiveTask.destroy()
-                const logsToDelete = await DailyLog.findAll({ where: { taskId: inactiveTask.id } })
-                for (const log of logsToDelete) {
-                    log.destroy()
-                }
+                const numLogsToDestroy = await DailyLog.destroy({ where: { taskId: inactiveTask.id } })
+                console.log(`Destroyed ${numLogsToDestroy} logs`)
             }
         }
 
