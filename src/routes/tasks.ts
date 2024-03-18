@@ -6,7 +6,11 @@ import { validateColorString, validateTaskNameNotTaken } from '../validation/tas
 import DailyLog from '../models/DailyLog'
 
 router.get('/all', checkTokenMiddleware, async (req, res) => {
-    res.send(await Task.findAll())
+    res.json({ success: true, value: await Task.findAll() })
+})
+
+router.get('/active', checkTokenMiddleware, async (req, res) => {
+    res.json({ success: true, value: await Task.findAll({ where: { isActive: true } }) })
 })
 
 router.get(':id', checkTokenMiddleware, async (req, res) => {
