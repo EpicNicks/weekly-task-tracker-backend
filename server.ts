@@ -26,13 +26,13 @@ app.use(rateLimit({
         return isValid
     },
     windowMs: 3 * 1000,
-    limit: 1,
+    limit: 10,
     standardHeaders: 'draft-7',
     legacyHeaders: false,
     message: 'Too many requests, please try again later.'
 }))
 app.use('/api/liveness', async (req, res) => {
-        res.send('alive')
+    res.send('alive')
 })
 app.use('/api/account', accountRoutes)
 app.use('/api/users', userRoutes)
