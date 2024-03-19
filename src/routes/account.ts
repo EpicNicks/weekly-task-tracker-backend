@@ -11,7 +11,7 @@ router.get('/available/:username', async (req, res) => {
         return res.status(400).json({ success: false, error: 'username was not provided' })
     }
     if (await User.findOne({ where: { username } })) {
-        return res.status(401).json({ success: true, value: true, error: `username ${username} is already in use` })
+        return res.status(200).json({ success: true, value: true, error: `username ${username} is already in use` })
     }
     return res.status(200).json({ success: true, value: false })
 })
