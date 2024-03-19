@@ -31,7 +31,9 @@ app.use(rateLimit({
     legacyHeaders: false,
     message: 'Too many requests, please try again later.'
 }))
-
+app.use('/liveness', async (req, res) => {
+        res.send('alive')
+})
 app.use('/account', accountRoutes)
 app.use('/users', userRoutes)
 app.use('/tasks', taskRoutes)
