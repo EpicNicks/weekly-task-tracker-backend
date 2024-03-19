@@ -31,13 +31,13 @@ app.use(rateLimit({
     legacyHeaders: false,
     message: 'Too many requests, please try again later.'
 }))
-app.use('/liveness', async (req, res) => {
+app.use('/api/liveness', async (req, res) => {
         res.send('alive')
 })
-app.use('/account', accountRoutes)
-app.use('/users', userRoutes)
-app.use('/tasks', taskRoutes)
-app.use('/logs', logsRoutes)
+app.use('/api/account', accountRoutes)
+app.use('/api/users', userRoutes)
+app.use('/api/tasks', taskRoutes)
+app.use('/api/logs', logsRoutes)
 
 app.listen(3000, () => {
     console.log('Server started on interal port 3000')
