@@ -38,12 +38,8 @@ router.get('/all', checkTokenMiddleware, async (req, res) => {
 })
 
 // params: ISO8601 date string
-router.get('/:date', checkTokenMiddleware, async (req, res) => {
-    const { date } = req.params
-    const { taskId } = req.body
-    if (!taskId) {
-        return res.status(400).json({ success: false, error: 'taskId not provided' })
-    }
+router.get('/:date/:taskId', checkTokenMiddleware, async (req, res) => {
+    const { date, taskId } = req.params
     if (!isValidISO8601(date)) {
         return res.status(400).json({ success: false, error: `invalid date ${date} passed` })
     }
