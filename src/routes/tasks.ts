@@ -134,6 +134,9 @@ router.patch('/update-task/:taskId', checkTokenMiddleware, async (req, res) => {
             taskId: ${taskId}, taskName: ${taskName}, rgbTaskColor: ${rgbTaskColor}, weeklyTargetMinutes: ${weeklyTargetMinutes}`
         })
     }
+    if (!validateColorString(rgbTaskColor.length)){
+        return res.status(400).json({ success: false, error: 'rgbTaskColor did not fit correct format len 8 hex string'})
+    }
     try {
         const task = await Task.findByPk(taskId)
         if (!task) {
