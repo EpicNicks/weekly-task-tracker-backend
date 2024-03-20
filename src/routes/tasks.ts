@@ -83,25 +83,6 @@ router.post('/create', checkTokenMiddleware, async (req: TokenRequest, res) => {
     }
 })
 
-router.patch('deactivate/:taskId', checkTokenMiddleware, async (req, res) => {
-    const { taskId } = req.params
-    const task = await Task.findByPk(Number(taskId))
-    if (!task) {
-        return res.status(404).json({ success: false, error: `Task with id ${taskId} does not exist` })
-    }
-    else {
-        try {
-            const updatedTask = await task.update({
-                isActive: false
-            })
-            res.json({ success: true, value: updatedTask })
-        } catch (error) {
-            console.log(error)
-            res.status(500).json({ success: false, error: 'Internal server error' })
-        }
-    }
-})
-
 router.patch('/deactivate/', checkTokenMiddleware, async (req: TokenRequest, res) => {
     const { taskName }: { taskName?: string } = req.query
     const { userId } = req.decodedToken!
@@ -122,6 +103,47 @@ router.patch('/deactivate/', checkTokenMiddleware, async (req: TokenRequest, res
             console.log(error)
             res.status(500).json({ success: false, error: 'Internal server error' })
         }
+    }
+})
+
+router.patch('deactivate/:taskId', checkTokenMiddleware, async (req, res) => {
+    const { taskId } = req.params
+    const task = await Task.findByPk(Number(taskId))
+    if (!task) {
+        return res.status(404).json({ success: false, error: `Task with id ${taskId} does not exist` })
+    }
+    else {
+        try {
+            const updatedTask = await task.update({
+                isActive: false
+            })
+            res.json({ success: true, value: updatedTask })
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ success: false, error: 'Internal server error' })
+        }
+    }
+})
+
+router.patch('/update-task/:taskId', checkTokenMiddleware, async (req, res) => {
+    const { taskId } = req.params
+    const { taskName, rgbTaskColor, weeklyTargetMinutes } = req.body
+    if (!taskId || !taskName || !rgbTaskColor || !weeklyTargetMinutes) {
+        return res.status(400).json({
+            success: false, error: `missing parameters in request. received: 
+            taskId: ${taskId}, taskName: ${taskName}, rgbTaskColor: ${rgbTaskColor}, weeklyTargetMinutes: ${weeklyTargetMinutes}`
+        })
+    }
+    try {
+        const task = await Task.findByPk(taskId)
+        if (!task) {
+            return res.status(404).json({ success: false, error: '' })
+        }
+        const updatedTask = task.update({ taskName, rgbTaskColor, weeklyTargetMinutes })
+        return res.json({ success: true, value: updatedTask })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ success: false, error: 'Interal server error' })
     }
 })
 
