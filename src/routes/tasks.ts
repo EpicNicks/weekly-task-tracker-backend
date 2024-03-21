@@ -127,7 +127,7 @@ router.patch('deactivate/:taskId', checkTokenMiddleware, async (req, res) => {
 router.patch('/update-task/:taskId', checkTokenMiddleware, async (req, res) => {
     const { taskId } = req.params
     const { taskName, rgbTaskColor, weeklyTargetMinutes } = req.body
-    if (!taskId || !taskName || !rgbTaskColor || !weeklyTargetMinutes) {
+    if (!taskId || !taskName || !rgbTaskColor || weeklyTargetMinutes === undefined) {
         return res.status(400).json({
             success: false, error: `missing parameters in request. received: 
             taskId: ${taskId}, taskName: ${taskName}, rgbTaskColor: ${rgbTaskColor}, weeklyTargetMinutes: ${weeklyTargetMinutes}`
