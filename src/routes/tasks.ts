@@ -105,7 +105,7 @@ router.patch('/deactivate/', checkTokenMiddleware, async (req: TokenRequest, res
     }
 })
 
-router.patch('deactivate/:taskId', checkTokenMiddleware, async (req, res) => {
+router.patch('/deactivate/:taskId', checkTokenMiddleware, async (req, res) => {
     const { taskId } = req.params
     const task = await Task.findByPk(Number(taskId))
     if (!task) {
