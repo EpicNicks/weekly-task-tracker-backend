@@ -108,7 +108,7 @@ router.patch('/change-date/:date', async (req, res) => {
 router.patch('/change-daily-minutes/:date', async (req, res) => {
     const { date } = req.params
     const { dailyTimeMinutes, taskId } = req.body
-    if (isValidISO8601(date)) {
+    if (!isValidISO8601(date)) {
         return res.status(400).json({ success: false, error: `invalid date ${date} passed, ensure the format passed is string of YYYY-MM-DD` })
     }
     if (!taskId) {
