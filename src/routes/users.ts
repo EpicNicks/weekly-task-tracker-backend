@@ -20,7 +20,7 @@ router.get('/points/:userId', checkTokenMiddleware, async (req, res) => {
 router.post('/collect-points/:userId', checkTokenMiddleware, async (req, res) => {
     const { userId } = req.params
     // go over all uncollected DailyLogs up to previous Sunday { logDate lte prev Sunday AND collectedPoints: false/0 }
-    // calculate vs weekly goal
+    // calculate vs weekly goal (no points on tasks that had no goal)
     // give bonus multiplier for collection of past week { logDate gt prev prev Sunday AND lte prev Sunday }
     // update User points, rollback logDates collected if User points are not updated
     const tasks = await Task.findAll({ where: { userId } })

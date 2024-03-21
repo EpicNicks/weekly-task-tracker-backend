@@ -49,8 +49,7 @@ router.post('/create', checkTokenMiddleware, async (req: TokenRequest, res) => {
     if (!(await validateTaskNameNotTaken(taskName))) {
         return res.status(400).json({ success: false, error: `taskName ${taskName} was taken by an existing task` })
     }
-    if (!weeklyTargetMinutes) {
-        // otherwise would simply set to 0 silently (do not like silently failing/default behaviour where it can be easily specified)
+    if (weeklyTargetMinutes === undefined) {
         return res.status(400).json({ success: false, error: 'weeklyTargetMinutes was not provided' })
     }
     try {
