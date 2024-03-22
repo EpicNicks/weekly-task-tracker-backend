@@ -37,7 +37,7 @@ router.get('/all', checkTokenMiddleware, async (req, res) => {
     // if there are any problems with this, recheck how the middleware handles date strings
     console.log(`retrieving all logs between startDate: ${startDate} and endDate: ${endDate} (inclusive)`)
     const logs = await DailyLog.findAll({ where: { logDate: { [Op.between]: [startDate!, endDate!] } } })
-    res.json({ success: true, dailyLogs: logs })
+    res.json({ success: true, value: logs })
 })
 
 // params: ISO8601 date string
