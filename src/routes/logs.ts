@@ -11,7 +11,7 @@ import isValidISO8601 from '../validation/dateValidation'
 router.get('/all', checkTokenMiddleware, async (req, res) => {
     const { startDate, endDate }: { startDate?: string, endDate?: string } = req.query
 
-    if (!!startDate && !!endDate) {
+    if (!startDate && !endDate) {
         return res.json({ success: true, value: await DailyLog.findAll() })
     }
     if (startDate) {
