@@ -14,13 +14,13 @@ router.get('/all', checkTokenMiddleware, async (req, res) => {
     if (!startDate && !endDate) {
         return res.json({ success: true, value: await DailyLog.findAll() })
     }
-    if (startDate) {
+    if (!startDate) {
         if (!isValidISO8601(endDate!)) {
             return res.status(400).json({ success: false, error: `endDate ${endDate} is not valid (must be in format: YYYY-MM-DD)` })
         }
         return res.json({ success: true, value: await DailyLog.findAll({ where: { logDate: { lte: endDate } } }) })
     }
-    if (endDate) {
+    if (!endDate) {
         if (!isValidISO8601(startDate!)) {
             return res.status(400).json({ success: false, error: `startDate ${startDate} is not valid (must be in format: YYYY-MM-DD)` })
         }
