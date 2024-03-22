@@ -18,12 +18,14 @@ router.get('/all', checkTokenMiddleware, async (req, res) => {
         if (!isValidISO8601(endDate!)) {
             return res.status(400).json({ success: false, error: `endDate ${endDate} is not valid (must be in format: YYYY-MM-DD)` })
         }
+        console.log(`retrieving all logs before and on endDate: ${endDate}`)
         return res.json({ success: true, value: await DailyLog.findAll({ where: { logDate: { lte: endDate } } }) })
     }
     if (!endDate) {
         if (!isValidISO8601(startDate!)) {
             return res.status(400).json({ success: false, error: `startDate ${startDate} is not valid (must be in format: YYYY-MM-DD)` })
         }
+        console.log(`retrieving all logs on and after startDate: ${startDate}`)
         return res.json({ success: true, value: await DailyLog.findAll({ where: { logDate: { gte: startDate } } }) })
     }
     // both are provided and valid
@@ -33,6 +35,7 @@ router.get('/all', checkTokenMiddleware, async (req, res) => {
     // we send the ISO8601 strings to avoid timezone issues and simply pass the user's local time forward
     // according to ChatGPT, passing the string raw will have Sequelize simply pass the string forward raw and have MySQL handle the implicit conversion as if it was a raw query
     // if there are any problems with this, recheck how the middleware handles date strings
+    console.log(`retrieving all logs between startDate: ${startDate} and endDate: ${endDate} (inclusive)`)
     const logs = await DailyLog.findAll({ where: { logDate: { [Op.between]: [startDate!, endDate!] } } })
     res.json({ success: true, dailyLogs: logs })
 })
