@@ -1,4 +1,5 @@
 import express from 'express'
+import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import rateLimit from 'express-rate-limit'
 import jwt from 'jsonwebtoken'
@@ -13,6 +14,7 @@ const app = express()
 app.disable('x-powered-by')
 
 app.use(bodyParser.json())
+app.use(morgan('tiny'))
 app.use(rateLimit({
     skip: (req) => {
         const token = req.headers.authorization?.split(' ')?.[1]
