@@ -13,6 +13,17 @@ router.get('/active', checkTokenMiddleware, async (req, res) => {
     res.json({ success: true, value: await Task.findAll({ where: { isActive: true } }) })
 })
 
+router.get('/total-progress/:taskId', checkTokenMiddleware, async (req, res) => {
+    const { taskId } = req.params
+    try {
+        const sumMinutes = await DailyLog.sum('dailyTimeMinutes', { where: { taskId } })
+        res.json({ success: true, value: sumMinutes })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ success: false, error: 'Internal Server Error' })
+    }
+})
+
 router.get(':id', checkTokenMiddleware, async (req, res) => {
     const { id } = req.params
     const task = await Task.findOne({ where: { id } })
@@ -133,8 +144,8 @@ router.patch('/update-task/:taskId', checkTokenMiddleware, async (req, res) => {
             taskId: ${taskId}, taskName: ${taskName}, rgbTaskColor: ${rgbTaskColor}, weeklyTargetMinutes: ${weeklyTargetMinutes}`
         })
     }
-    if (!validateColorString(rgbTaskColor)){
-        return res.status(400).json({ success: false, error: 'rgbTaskColor did not fit correct format len 8 hex string'})
+    if (!validateColorString(rgbTaskColor)) {
+        return res.status(400).json({ success: false, error: 'rgbTaskColor did not fit correct format len 8 hex string' })
     }
     try {
         const task = await Task.findByPk(taskId)
