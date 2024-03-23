@@ -61,10 +61,18 @@ router.post('/create', async (req, res) => {
     if (!isValidISO8601(logDate)) {
         return res.status(400).json({ success: false, error: `invalid date ${logDate} passed, ensure the format passed is string of YYYY-MM-DD` })
     }
-    if (await DailyLog.findOne({ where: { logDate, taskId } })) {
-        return res.status(400).json({ success: false, error: `record at date ${logDate} already exists for taskId ${taskId}` })
-    }
     try {
+        const existingLog = await DailyLog.findOne({ where: { logDate, taskId } })
+        if (existingLog) {
+            if (existingLog.dailyTimeMinutes === 0) {
+                const updatedLog = await existingLog.update({
+                    logDate,
+                    dailyTimeMinutes,
+                })
+                return res.json({ success: true, value: updatedLog })
+            }
+            return res.status(400).json({ success: false, error: `record at date ${logDate} already exists for taskId ${taskId}` })
+        }
         const log = await DailyLog.create({
             logDate,
             taskId,
