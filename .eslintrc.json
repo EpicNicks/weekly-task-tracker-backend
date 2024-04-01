@@ -15,15 +15,14 @@
     "plugins": [
         "@typescript-eslint"
     ],
-    "ignorePatterns": ["/node_modules/*", "jest.config.js"],
+    "ignorePatterns": [
+        "/node_modules/*",
+        "jest.config.js"
+    ],
     "rules": {
         "indent": [
             "error",
             4
-        ],
-        "linebreak-style": [
-            "warn",
-            "unix"
         ],
         "quotes": [
             "error",

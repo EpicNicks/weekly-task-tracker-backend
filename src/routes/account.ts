@@ -20,7 +20,7 @@ router.get('/userInfo', checkTokenMiddleware, async (req: TokenRequest, res) => 
     const { userId } = req.decodedToken!
     try {
         const user = await User.findByPk(userId)
-        return res.json({ success: true, value: { id: user!.id, username: user!.username, points: user!.points } })
+        return res.json({ success: true, value: { id: user!.id, username: user!.username } })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ success: false, error: 'Internal server error' })
@@ -36,7 +36,7 @@ router.post('/register', async (req, res) => {
         if (await User.findOne({ where: { username } })) {
             return res.status(401).json({ success: false, error: `Username ${username} is already in use` })
         }
-        await User.create({ username, passwordHash: password, points: 0 })
+        await User.create({ username, passwordHash: password })
         res.status(201).send({ success: true })
     } catch (error) {
         console.log(error)

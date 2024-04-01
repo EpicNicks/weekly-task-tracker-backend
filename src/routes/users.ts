@@ -1,13 +1,13 @@
 import express from 'express'
 const router = express.Router()
 import checkTokenMiddleware from '../middleware/tokenCheck'
-import User from '../models/User'
 import Task from '../models/Task'
 import DailyLog from '../models/DailyLog'
+import UsersInfo from '../models/UsersInfo'
 
 router.get('/points/:userId', checkTokenMiddleware, async (req, res) => {
     const { userId } = req.params
-    const pointsUser = await User.findByPk(userId)
+    const pointsUser = await UsersInfo.findByPk(userId)
     if (!pointsUser) {
         // shouldn't happen since the user is already logged in
         return res.status(404).json({ success: false, error: `No User with username: ${pointsUser} found` })
@@ -27,7 +27,7 @@ router.post('/collect-points/:userId', checkTokenMiddleware, async (req, res) =>
     const taskIds = tasks.map(task => task.id)
     const uncollected = await DailyLog.findAll({ where: { collectedPoints: false, taskId: { in: taskIds } } })
     // split the minutes into weeks and evaluate each week into points
-    
+
 })
 
 export default router
