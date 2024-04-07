@@ -4,6 +4,7 @@ import checkTokenMiddleware, { TokenRequest } from '../middleware/tokenCheck'
 import Task from '../models/Task'
 import { validateColorString, validateTaskNameNotTaken } from '../validation/taskValidations'
 import DailyLog from '../models/DailyLog'
+import { DateTime } from 'luxon'
 
 router.get('/all', checkTokenMiddleware, async (req, res) => {
     res.json({ success: true, value: await Task.findAll() })
@@ -84,6 +85,7 @@ router.post('/create', checkTokenMiddleware, async (req: TokenRequest, res) => {
             taskName: taskName!,
             rgbTaskColor,
             weeklyTargetMinutes: weeklyTargetMinutes!,
+            createdDate: DateTime.now().toISODate(),
             isActive: true,
         })
         return res.json({ success: true, value: task })
